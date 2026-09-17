@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import sse from "@fastify/sse";
 import cookie from "@fastify/cookie";
+import rateLimit from '@fastify/rate-limit'
 import { healthRoutes } from "./routes/health.js";
 import { authRoutes } from "./routes/auth.js";
 import { eventsRoutes } from "./routes/events.js";
@@ -37,6 +38,7 @@ await server.register(cors, {
 
 await server.register(sse);
 await server.register(cookie);
+await server.register(rateLimit, { global: false });
 
 await server.register(healthRoutes);
 await server.register(authRoutes);

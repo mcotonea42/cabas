@@ -23,8 +23,23 @@ function generateInviteCode(): string {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
 }
 
+function emailRateLimitKey(request: any): string {
+  const email = (request.body as { email?: string } | undefined)?.email;
+  return email?.trim().toLowerCase() || request.ip;
+}
+
 export async function authRoutes(fastify: FastifyInstance) {
-  fastify.post("/auth/otp/request", async (request, reply) => {
+  fastify.post("/auth/otp/request",
+  {
+    config: {
+      rateLimit: {
+        max: 3,
+        timeWindow: "10 minutes",
+        keyGenerator: emailRateLimitKey,
+      },
+    },
+  },
+  async (request, reply) => {
     const { email } = request.body as { email: string };
     if (!email) {
       return reply.code(400).send({ error: "email is required" });
@@ -47,7 +62,17 @@ export async function authRoutes(fastify: FastifyInstance) {
     return { success: true, isNewUser: !existingUser };
   });
 
-  fastify.post("/auth/otp/verify", async (request, reply) => {
+  fastify.post("/auth/otp/verify",
+  {
+    config: {
+      rateLimit: {
+        max: 5,
+        timeWindow: "10 minutes",
+        keyGenerator: emailRateLimitKey,
+      },
+    },
+  },
+  async (request, reply) => {
     const { email, code, household } = request.body as {
       email: string;
       code: string;
