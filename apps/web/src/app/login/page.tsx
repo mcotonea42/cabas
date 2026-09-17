@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { TextInput } from "@/components/TextInput";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function LoginPage() {
     }
 
     const data = await res.json();
+    toast.success("Code envoyé, vérifie ta boîte mail");
     setIsNewUser(data.isNewUser);
     setStep('code');
   }
@@ -69,6 +71,7 @@ export default function LoginPage() {
       return;
     }
 
+    toast.success("Connexion réussie");
     router.push("/");
   }
 

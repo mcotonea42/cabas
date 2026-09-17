@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { TextInput } from "@/components/TextInput";
+import { toast } from "sonner";
 
 export default function Home() {
   const router = useRouter();
@@ -34,16 +35,30 @@ export default function Home() {
   }, []);
 
   async function createList(name: string) {
-    await apiFetch(`/lists`, {
+    const res = await apiFetch(`/lists`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
     });
+
+    if (!res.ok) {
+      toast.error("Impossible de créer la liste");
+      return;
+    }
+
+    toast.success("Liste créée");
     loadLists();
   }
 
   async function deleteList(id: string) {
-    await apiFetch(`/lists/${id}`, { method: "DELETE" });
+    const res = await apiFetch(`/lists/${id}`, { method: "DELETE" });
+
+    if (!res.ok) {
+      toast.error("Impossible de supprimer la liste");
+      return;
+    }
+
+    toast.success("Liste supprimée");
     loadLists();
   }
 

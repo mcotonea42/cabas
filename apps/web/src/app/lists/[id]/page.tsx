@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Item, List } from "@/lib/types";
-import { apiFetch, API_URL, requireAuth } from "@/lib/api";
+import { apiFetch, getApiUrl, requireAuth } from "@/lib/api";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { TextInput } from "@/components/TextInput";
+import { toast } from "sonner";
 
 export default function ListPage() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function ListPage() {
     loadItems();
     loadList();
 
-    const eventSource = new EventSource(`${API_URL}/events`);
+    const eventSource = new EventSource(`${getApiUrl()}/events`);
     eventSource.addEventListener("items-changed", () => {
       loadItems();
     });
@@ -49,31 +50,55 @@ export default function ListPage() {
 
     if (!name.trim()) return;
 
-    await apiFetch(`/lists/${id}/items`, {
+    const res = await apiFetch(`/lists/${id}/items`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
     });
+
+    if (!res.ok) {
+      toast.error("Impossible d'ajouter l'article");
+      return;
+    }
     setName("");
     loadItems();
   }
 
   async function toggleItem(item: Item) {
-    await apiFetch(`/items/${item.id}`, {
+    const res = await apiFetch(`/items/${item.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isChecked: !item.isChecked }),
     });
+
+    if (!res.ok) {
+      toast.error("Impossible de mettre à jour l'article");
+      return;
+    }
+
     loadItems();
   }
 
   async function deleteItem(itemId: string) {
-    await apiFetch(`/items/${itemId}`, { method: "DELETE" });
+    const res = await apiFetch(`/items/${itemId}`, { method: "DELETE" });
+
+    if (!res.ok) {
+      toast.error("Impossible de supprimer l'article");
+      return;
+    }
+
     loadItems();
   }
 
   async function clearChecked() {
-    await apiFetch(`/lists/{id}/items/checked)`, { method: "DELETE" });
+    const res = await apiFetch(`/lists/{id}/items/checked)`, { method: "DELETE" });
+
+    if (!res.ok) {
+      toast.error("Impossible de vider les articles cochés");
+      return;
+    }
+
+    toast.success("Articles cochés supprimés");
     loadItems();
   }
 

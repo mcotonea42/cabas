@@ -26,7 +26,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         {children}
-        <Toaster />
+        <Toaster 
+          style={
+            {
+              "--normal-bg": "var(--color-cream)",
+              "--normal-border": "var(--color-taupe)",
+              "--normal-text": "var(--color-ebony)",
+              "--success-bg": "var(--color-cream)",
+              "--success-border": "var(--color-olive)",
+              "--success-text": "var(--color-ebony)",
+              "--error-bg": "var(--color-cream)",
+              "--error-border": "#dc2626",
+              "--error-text": "var(--color-ebony)",
+            } as React.CSSProperties
+          }
+        />
       </body>
     </html>
   );
