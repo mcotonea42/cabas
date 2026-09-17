@@ -16,7 +16,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-body {
+html, body {
   background: linear-gradient(to bottom, #ffffff, var(--color-cream));
   color: var(--foreground);
   font-family: var(--font-sans);

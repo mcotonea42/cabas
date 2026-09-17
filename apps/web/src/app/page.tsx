@@ -57,7 +57,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-4 py-10">
+    <main className="flex min-h-dvh flex-col items-center px-4 py-10">
       <header className="mb-8 text-center">
         <h1 className="text-olive text-2xl font-bold">Cabas</h1>
         <p className="text-taupe mt-1 text-sm">Nos listes de courses</p>
