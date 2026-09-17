@@ -104,6 +104,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Adresse email"
                   className="w-full text-center tracking-widest"
+                  required
                 />
                 <Button
                   type="submit"
