@@ -1,0 +1,6 @@
+node_modules
+.DS_Store
+.agents/
+.claude/
+.windsurf/
+skills-lock.json

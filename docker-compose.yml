@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cabas
+      POSTGRES_PASSWORD: cabas
+      POSTGRES_DB: cabas
+    ports:
+      - "4242:5432"
+    volumes:
+      - cabas_pgdata:/var/lib/postgresql
+
+volumes:
+  cabas_pgdata:

@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Household {
+  id          String @id @default(uuid())
+  name        String
+  inviteCode  String @unique
+  createdAt   DateTime @default(now())
+  users       User[]
+  lists       List[]
+}
+
+model User {
+  id          String  @id @default(uuid())
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  email       String  @unique
+  googleId    String? @unique
+  createdAt   DateTime  @default(now())
+  sessions    Session[]
+}
+
+model Session {
+  id        String @id @default(uuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model LoginCode {
+  id        String @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model List {
+  id          String  @id @default(uuid())
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  name        String
+  createdAt   DateTime  @default(now())
+  items       Item[]
+}
+
+model Item {
+  id        String @id @default(uuid())
+  listId    String
+  list      List  @relation(fields: [listId], references: [id], onDelete: Cascade)
+  name      String
+  quantity  String?
+  isChecked Boolean @default(false)
+  createdAt DateTime @default(now())
+}
