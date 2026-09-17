@@ -26,11 +26,19 @@ export default function LoginPage() {
     setError("");
     if (!email.trim()) return;
 
-    const res = await apiFetch("/auth/otp/request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    let res: Response;
+
+    try {
+      res = await apiFetch("/auth/otp/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+    } catch {
+      setError("Impossible de contacter le serveur, vérifie ta connexion.");
+      return;
+
+    }
 
     if (!res.ok) {
       setError("Impossible d'envoyer le code, réessaie.");
@@ -96,6 +104,10 @@ export default function LoginPage() {
               <h2 className="text-ebony mb-8 text-center text-xl font-semibold">
                 Connecte-toi
               </h2>
+
+              {error && (
+                <p className="mt-3 text-center text-sm text-red-500">{error}</p>
+              )}
 
               <form onSubmit={requestCode} className="flex flex-col gap-3">
                 <TextInput
@@ -238,7 +250,7 @@ export default function LoginPage() {
                     className="w-full"
                   />
 
-                  <div>
+                  <div className="flex gap-2">
                     <Button
                       type="submit"
                       className="w-full"
