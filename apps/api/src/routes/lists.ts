@@ -9,10 +9,21 @@ export async function listsRoutes(fastify: FastifyInstance) {
 
     if (!user) return;
 
-    return prisma.list.findMany({
+    const lists = await prisma.list.findMany({
       where: { householdId: user.householdId },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        items: { select: { isChecked: true}},
+      },
     });
+
+    return lists.map((list) => ({
+      id: list.id,
+      name: list.name,
+      createdAt: list.createdAt,
+      itemsCount: list.items.length,
+      checkedCount: list.items.filter((item) => item.isChecked).length,
+    }));
   });
 
   fastify.post("/lists", async (request, reply) => {

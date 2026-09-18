@@ -138,4 +138,14 @@ export async function authRoutes(fastify: FastifyInstance) {
     });
     return { ...user, household };
   });
+
+  fastify.post("/auth/logout", async (request, reply) => {
+    const sessionId = request.cookies.sessionId;
+
+    if (sessionId) {
+      await prisma.session.deleteMany({ where: { id: sessionId } });
+    }
+    reply.clearCookie("sessionId", { path: "/" });
+    return { success: true };
+  })
 }
