@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Item, List } from "@/lib/types";
 import { apiFetch, getApiUrl, requireAuth } from "@/lib/api";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { TextInput } from "@/components/TextInput";
 import { toast } from "sonner";
+import { DeleteAction } from "@/components/DeleteAction";
+import { Trash2 } from "lucide-react";
 
 export default function ListPage() {
   const router = useRouter();
@@ -150,9 +152,9 @@ export default function ListPage() {
                     />
                     <span className="text-ebony">{item.name}</span>
                   </label>
-                  <button onClick={() => deleteItem(item.id)} className="text-xs text-taupe hover:text-red-600"> 
-                    Supprimer
-                  </button>
+                  <DeleteAction onClick={() => deleteItem(item.id)} aria-label="Supprimer">
+                    <Trash2 className="h-4 w-4" />
+                  </DeleteAction>
                 </li>
               ))}
             {items.length === 0 && (
@@ -174,7 +176,9 @@ export default function ListPage() {
                         />
                         <span className="text-taupe line-through">{item.name}</span>
                       </label>
-                      <button onClick={() => deleteItem(item.id)} className="text-xs text-taupe hover:text-red-600">Supprimer</button>
+                      <DeleteAction onClick={() => deleteItem(item.id)} aria-label="Supprimer">
+                        <Trash2 className="h-4 w-4" />
+                      </DeleteAction>
                     </li>
                   ))}
               </ul>
