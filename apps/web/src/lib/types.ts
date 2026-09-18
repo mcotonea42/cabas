@@ -2,6 +2,8 @@ export type List = {
   id: string;
   name: string;
   createdAt: string;
+  itemsCount: number;
+  checkedCount: number;
 };
 
 export type Item = {
