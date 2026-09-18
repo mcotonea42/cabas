@@ -15,6 +15,7 @@ async function createSessionAndSetCookie(userId: string, reply: any) {
     path: "/",
     httpOnly: true,
     sameSite: "lax",
+    secure: process.env.NODE_ENV === 'production',
     expires: expiresAt,
   });
 }

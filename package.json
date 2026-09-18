@@ -16,11 +16,5 @@
       "onFail": "download"
     }
   },
-  "type": "module",
-  "dependencies": {
-    "@fastify/cookie": "^11.1.2",
-    "lucide-react": "^1.46.0",
-    "resend": "^6.28.0",
-    "sonner": "^2.0.8"
-  }
+  "type": "module"
 }
