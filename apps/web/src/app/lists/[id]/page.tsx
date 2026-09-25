@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Item, List } from "@/lib/types";
 import { apiFetch, getApiUrl, requireAuth } from "@/lib/api";
-import { ArrowLeft, Trash } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
@@ -19,6 +19,7 @@ export default function ListPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [name, setName] = useState("");
   const [list, setList] = useState<List | null>(null);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   async function loadItems() {
     const res = await apiFetch(`/lists/${id}/items`);
@@ -32,8 +33,17 @@ export default function ListPage() {
   }
 
   useEffect(() => {
-    requireAuth(router);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    async function init() {
+      const isAuthenticated = await requireAuth(router);
+      if (isAuthenticated) setIsAuthChecked(true);
+    }
+
+    init();
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthChecked) return;
+
     loadItems();
     loadList();
 
@@ -45,7 +55,7 @@ export default function ListPage() {
     return () => {
       eventSource.close();
     };
-  }, [id]);
+  }, [id, isAuthChecked]);
 
   async function addItem(e: React.FormEvent) {
     e.preventDefault();
@@ -93,7 +103,7 @@ export default function ListPage() {
   }
 
   async function clearChecked() {
-    const res = await apiFetch(`/lists/{id}/items/checked)`, { method: "DELETE" });
+    const res = await apiFetch(`/lists/${id}/items/checked`, { method: "DELETE" });
 
     if (!res.ok) {
       toast.error("Impossible de vider les articles cochés");
@@ -105,6 +115,8 @@ export default function ListPage() {
   }
 
   const checkedCount = items.filter((item) => item.isChecked).length;
+
+  if (!isAuthChecked) return null;
 
   return (
     <main className="flex min-h-dvh flex-col items-center px-4 py-10">

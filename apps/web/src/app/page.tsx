@@ -16,6 +16,7 @@ import { CardList } from "@/components/CardList";
 
 export default function Home() {
   const router = useRouter();
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [lists, setLists] = useState<List[]>([]);
   const [name, setName] = useState("");
 
@@ -25,9 +26,16 @@ export default function Home() {
   }
 
   useEffect(() => {
-    requireAuth(router);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    loadLists();
+    async function init() {
+      const isAuthenticated = await requireAuth(router);
+      if (!isAuthenticated) return;
+
+      setIsAuthChecked(true);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      loadLists();
+    }
+
+    init();
   }, []);
 
   async function createList(name: string) {
@@ -66,6 +74,8 @@ export default function Home() {
     await createList(name);
     setName("");
   }
+
+  if (!isAuthChecked) return null;
 
   return (
     <main className="relative flex min-h-dvh flex-col items-center px-4 py-10">

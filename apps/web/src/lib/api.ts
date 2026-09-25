@@ -16,10 +16,13 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   });
 }
 
-export async function requireAuth(router: AppRouterInstance) {
+export async function requireAuth(router: AppRouterInstance): Promise<boolean> {
   const res = await apiFetch("/auth/me");
 
   if (!res.ok) {
     router.push("/login");
+    return false;
   }
+
+  return true;
 }

@@ -13,6 +13,7 @@ import { toast } from "sonner";
 export default function SettingsPage() {
     const router = useRouter();
     const [household, setHousehold] = useState<Household | null>(null);
+    const [isAuthChecked, setIsAuthChecked] = useState(false);
 
     async function loadHousehold() {
         const res = await apiFetch('/auth/me');
@@ -21,9 +22,15 @@ export default function SettingsPage() {
     };
 
     useEffect(() => {
-        requireAuth(router);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        loadHousehold();
+        async function init() {
+            const isAuthenticated = await requireAuth(router);
+            if (!isAuthenticated) return;
+
+            setIsAuthChecked(true);
+            loadHousehold();
+        }
+
+        init();
     }, []);
 
     async function handleLogout() {
@@ -36,6 +43,8 @@ export default function SettingsPage() {
 
         router.push("/login");
     }
+
+    if (!isAuthChecked) return null;
 
     return (
         <main className="flex min-h-dvh flex-col items-center px-4 py-10">
